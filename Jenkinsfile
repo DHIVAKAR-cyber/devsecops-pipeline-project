@@ -32,3 +32,13 @@ pipeline {
     }
 }
 
+stage('Test Application') {
+    steps {
+        sh 'docker compose run --build --rm web python manage.py test hospital'
+    }
+}
+post {
+    always {
+        sh 'docker compose down --remove-orphans'
+    }
+}
