@@ -1,4 +1,3 @@
-
 pipeline {
     agent any
 
@@ -13,6 +12,7 @@ pipeline {
             steps {
                 sh 'git --version'
                 sh 'docker --version'
+                sh 'docker compose version'
             }
         }
 
@@ -24,21 +24,22 @@ pipeline {
             }
         }
 
+        stage('Test Application') {
+            steps {
+                sh 'docker compose run --build --rm web python manage.py test hospital'
+            }
+        }
+
         stage('Build Docker Image') {
             steps {
                 sh 'docker build -t devsecops-django-app:jenkins -f app/Dockerfile app'
             }
         }
     }
-}
 
-stage('Test Application') {
-    steps {
-        sh 'docker compose run --build --rm web python manage.py test hospital'
-    }
-}
-post {
-    always {
-        sh 'docker compose down --remove-orphans'
+    post {
+        always {
+            sh 'docker compose down --remove-orphans'
+        }
     }
 }
