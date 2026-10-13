@@ -5,23 +5,30 @@ pipeline {
     stages {
         stage('Checkout') {
             steps {
-                echo 'Source code is available in the workspace.'
-                sh 'git --version'
+                checkout scm
             }
         }
 
-        stage('Docker Check') {
+        stage('Verify Tools') {
             steps {
+                sh 'git --version'
                 sh 'docker --version'
-                sh 'docker ps'
             }
         }
 
-        stage('Application Check') {
+        stage('Verify Application') {
             steps {
                 sh 'test -f app/manage.py'
-                echo 'Django application file found.'
+                sh 'test -f app/Dockerfile'
+                echo 'Application files verified.'
+            }
+        }
+
+        stage('Build Docker Image') {
+            steps {
+                sh 'docker build -t devsecops-django-app:jenkins -f app/Dockerfile app'
             }
         }
     }
 }
+
