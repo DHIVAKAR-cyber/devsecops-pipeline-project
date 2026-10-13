@@ -26,7 +26,7 @@ pipeline {
 
         stage('Test Application') {
             steps {
-                sh 'docker compose run --build --rm web python manage.py test hospital'
+                sh 'docker compose run --build --rm --no-deps web python manage.py test hospital'
             }
         }
 
